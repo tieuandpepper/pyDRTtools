@@ -37,6 +37,9 @@ class GUI(QtWidgets.QMainWindow):
         # linking buttons with various functions
         # import button
         self.ui.import_button.clicked.connect(self.import_file)
+        ### Yao Lab modification
+        self.ui.import_folder.clicked.connect(self.import_folder)
+        ###
         self.ui.induct_choice.currentIndexChanged.connect(self.inductance_callback) # activated when item change
         
         # show buttons
@@ -62,6 +65,22 @@ class GUI(QtWidgets.QMainWindow):
         self.ui.export_fig_button.clicked.connect(self.export_fig)
        
     def import_file(self):
+        
+        # file dialog pop up, the users can choose a csv or txt file
+        path, ext = QFileDialog.getOpenFileName(None, "Please choose a file", "", "All Files (*);; CSV files (*.csv);; TXT files (*.txt)") 
+        
+        # return if there is no path or the file format is not correct
+        if not (path.endswith('.csv') or path.endswith('.txt')):
+            print('return')
+            return
+            
+        self.data = EIS_object.from_file(path)   ######### Here
+        
+        # discard inductance data if necessary
+        self.inductance_callback()
+        self.statusBar().showMessage('Imported file: %s' % path, 1000)
+
+    def import_folder(self):
         
         # file dialog pop up, the users can choose a csv or txt file
         path, ext = QFileDialog.getOpenFileName(None, "Please choose a file", "", "All Files (*);; CSV files (*.csv);; TXT files (*.txt)") 
